@@ -1,0 +1,883 @@
+{
+  "info": {
+    "name": "AI Agent Platform API",
+    "description": "API collection for the AI Agent Platform - enables users to create and manage AI agents, conduct text conversations with streaming responses, and interact via voice.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "version": "1.0.0"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8000",
+      "type": "string"
+    },
+    {
+      "key": "agentId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "sessionId",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Health",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/health",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "health"]
+            },
+            "description": "Check if the API is running and healthy."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Agents",
+      "item": [
+        {
+          "name": "List All Agents",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response is an array of agents', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.agents).to.be.an('array');",
+                  "});",
+                  "",
+                  "// Save first agent ID if available",
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.agents && jsonData.agents.length > 0) {",
+                  "    pm.collectionVariables.set('agentId', jsonData.agents[0].id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/agents",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "agents"]
+            },
+            "description": "Retrieve a list of all AI agents with their session counts."
+          },
+          "response": []
+        },
+        {
+          "name": "Create Agent",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 201', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "pm.test('Agent has required fields', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('id');",
+                  "    pm.expect(jsonData).to.have.property('name');",
+                  "    pm.expect(jsonData).to.have.property('system_prompt');",
+                  "});",
+                  "",
+                  "// Save agent ID for subsequent requests",
+                  "var jsonData = pm.response.json();",
+                  "pm.collectionVariables.set('agentId', jsonData.id);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\": \"Test Assistant\",\n    \"system_prompt\": \"You are a helpful assistant. Be concise and friendly in your responses.\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/agents",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "agents"]
+            },
+            "description": "Create a new AI agent with a name and system prompt."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Agent by ID",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Agent has correct structure', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('id');",
+                  "    pm.expect(jsonData).to.have.property('name');",
+                  "    pm.expect(jsonData).to.have.property('system_prompt');",
+                  "    pm.expect(jsonData).to.have.property('created_at');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/agents/{{agentId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "agents", "{{agentId}}"]
+            },
+            "description": "Retrieve a specific agent by its ID."
+          },
+          "response": []
+        },
+        {
+          "name": "Update Agent",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Agent name was updated', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.name).to.equal('Updated Assistant');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\": \"Updated Assistant\",\n    \"system_prompt\": \"You are an updated helpful assistant. Be very concise.\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/agents/{{agentId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "agents", "{{agentId}}"]
+            },
+            "description": "Update an existing agent's name and/or system prompt."
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Agent",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 204', function () {",
+                  "    pm.response.to.have.status(204);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/agents/{{agentId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "agents", "{{agentId}}"]
+            },
+            "description": "Delete an agent and all its associated sessions and messages."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Sessions",
+      "item": [
+        {
+          "name": "List Sessions for Agent",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response has sessions array', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.sessions).to.be.an('array');",
+                  "});",
+                  "",
+                  "// Save first session ID if available",
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.sessions && jsonData.sessions.length > 0) {",
+                  "    pm.collectionVariables.set('sessionId', jsonData.sessions[0].id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/agents/{{agentId}}/sessions",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "agents", "{{agentId}}", "sessions"]
+            },
+            "description": "List all chat sessions for a specific agent."
+          },
+          "response": []
+        },
+        {
+          "name": "Create Session",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 201', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "pm.test('Session has required fields', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('id');",
+                  "    pm.expect(jsonData).to.have.property('agent_id');",
+                  "});",
+                  "",
+                  "// Save session ID for subsequent requests",
+                  "var jsonData = pm.response.json();",
+                  "pm.collectionVariables.set('sessionId', jsonData.id);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"title\": \"Test Conversation\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/agents/{{agentId}}/sessions",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "agents", "{{agentId}}", "sessions"]
+            },
+            "description": "Create a new chat session for an agent. Title is optional."
+          },
+          "response": []
+        },
+        {
+          "name": "Create Session (No Title)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 201', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "pm.test('Session created with null title', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.title).to.be.null;",
+                  "});",
+                  "",
+                  "// Save session ID for subsequent requests",
+                  "var jsonData = pm.response.json();",
+                  "pm.collectionVariables.set('sessionId', jsonData.id);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/agents/{{agentId}}/sessions",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "agents", "{{agentId}}", "sessions"]
+            },
+            "description": "Create a new chat session without a title. The title will be auto-generated from the first message."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Session Details",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Session has messages and agent', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('messages');",
+                  "    pm.expect(jsonData).to.have.property('agent');",
+                  "    pm.expect(jsonData.messages).to.be.an('array');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/sessions/{{sessionId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "sessions", "{{sessionId}}"]
+            },
+            "description": "Get session details including the last 50 messages and agent information."
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Session",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 204', function () {",
+                  "    pm.response.to.have.status(204);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/sessions/{{sessionId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "sessions", "{{sessionId}}"]
+            },
+            "description": "Delete a chat session and all its messages."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Messages",
+      "item": [
+        {
+          "name": "List Messages (Paginated)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response has pagination info', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('messages');",
+                  "    pm.expect(jsonData).to.have.property('has_more');",
+                  "    pm.expect(jsonData).to.have.property('total_count');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/sessions/{{sessionId}}/messages?limit=50",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "sessions", "{{sessionId}}", "messages"],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "50",
+                  "description": "Number of messages to return (1-100, default 50)"
+                },
+                {
+                  "key": "before",
+                  "value": "",
+                  "description": "Cursor for pagination - message ID to fetch messages before",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Get paginated list of messages for a session. Supports cursor-based pagination."
+          },
+          "response": []
+        },
+        {
+          "name": "Send Text Message (SSE Stream)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// Note: This endpoint returns Server-Sent Events (SSE)",
+                  "// Postman will show the raw SSE stream",
+                  "pm.test('Response is text/event-stream', function () {",
+                  "    pm.expect(pm.response.headers.get('Content-Type')).to.include('text/event-stream');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "text/event-stream"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"content\": \"Hello! How are you today?\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/sessions/{{sessionId}}/messages",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "sessions", "{{sessionId}}", "messages"]
+            },
+            "description": "Send a text message and receive AI response via Server-Sent Events (SSE). Events: 'token' (streaming tokens), 'done' (final message with IDs), 'error' (error info)."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Voice",
+      "item": [
+        {
+          "name": "Send Voice Message",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response has user and assistant messages', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('user_message');",
+                  "    pm.expect(jsonData).to.have.property('assistant_message');",
+                  "});",
+                  "",
+                  "pm.test('User message has audio_url', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.user_message).to.have.property('audio_url');",
+                  "});",
+                  "",
+                  "pm.test('Assistant message has tts_audio_url', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.assistant_message).to.have.property('tts_audio_url');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "audio",
+                  "description": "Audio file (webm, mp3, wav, etc.) - max 5MB, max 120 seconds",
+                  "type": "file",
+                  "src": []
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/sessions/{{sessionId}}/voice",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "sessions", "{{sessionId}}", "voice"]
+            },
+            "description": "Send a voice message. The backend will: 1) Save the audio file, 2) Transcribe with Whisper (STT), 3) Get AI chat response, 4) Generate TTS audio, 5) Return both messages with audio URLs."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Audio File",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200 or 404', function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 404]);",
+                  "});",
+                  "",
+                  "if (pm.response.code === 200) {",
+                  "    pm.test('Response is audio', function () {",
+                  "        pm.expect(pm.response.headers.get('Content-Type')).to.include('audio');",
+                  "    });",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/audio/tts/example.mp3",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "audio", "tts", "example.mp3"]
+            },
+            "description": "Retrieve an audio file. Folders: 'uploads' (user voice messages), 'tts' (AI voice responses)."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Workflows",
+      "item": [
+        {
+          "name": "Complete Text Chat Flow",
+          "item": [
+            {
+              "name": "1. Create Agent",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "var jsonData = pm.response.json();",
+                      "pm.collectionVariables.set('agentId', jsonData.id);",
+                      "pm.test('Agent created', function () {",
+                      "    pm.response.to.have.status(201);",
+                      "});"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"name\": \"Friendly Helper\",\n    \"system_prompt\": \"You are a friendly and helpful assistant. Keep your responses concise and engaging.\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/agents",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "agents"]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "2. Create Session",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "var jsonData = pm.response.json();",
+                      "pm.collectionVariables.set('sessionId', jsonData.id);",
+                      "pm.test('Session created', function () {",
+                      "    pm.response.to.have.status(201);",
+                      "});"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/agents/{{agentId}}/sessions",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "agents", "{{agentId}}", "sessions"]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "3. Send First Message",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "text/event-stream"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"content\": \"Hi there! What can you help me with?\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/sessions/{{sessionId}}/messages",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "sessions", "{{sessionId}}", "messages"]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "4. Send Follow-up Message",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "text/event-stream"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"content\": \"Can you tell me a fun fact?\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/sessions/{{sessionId}}/messages",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "sessions", "{{sessionId}}", "messages"]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "5. Get Session with Messages",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/sessions/{{sessionId}}",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "sessions", "{{sessionId}}"]
+                }
+              },
+              "response": []
+            }
+          ],
+          "description": "A complete workflow demonstrating text-based chat interaction."
+        },
+        {
+          "name": "Complete Voice Chat Flow",
+          "item": [
+            {
+              "name": "1. Create Agent",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "var jsonData = pm.response.json();",
+                      "pm.collectionVariables.set('agentId', jsonData.id);"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"name\": \"Voice Assistant\",\n    \"system_prompt\": \"You are a voice assistant. Keep your responses brief and natural for spoken conversation.\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/agents",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "agents"]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "2. Create Session",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "var jsonData = pm.response.json();",
+                      "pm.collectionVariables.set('sessionId', jsonData.id);"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/agents/{{agentId}}/sessions",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "agents", "{{agentId}}", "sessions"]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "3. Send Voice Message",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "key": "audio",
+                      "description": "Select an audio file (webm, mp3, wav)",
+                      "type": "file",
+                      "src": []
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/sessions/{{sessionId}}/voice",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "sessions", "{{sessionId}}", "voice"]
+                },
+                "description": "Upload an audio file to send a voice message. The response will include both the transcription and the TTS audio response."
+              },
+              "response": []
+            },
+            {
+              "name": "4. Get Session Messages",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/sessions/{{sessionId}}/messages",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "sessions", "{{sessionId}}", "messages"]
+                }
+              },
+              "response": []
+            }
+          ],
+          "description": "A complete workflow demonstrating voice-based chat interaction with Speech-to-Text and Text-to-Speech."
+        }
+      ],
+      "description": "Complete end-to-end workflows for testing the platform."
+    }
+  ]
+}
