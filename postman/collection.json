@@ -33,8 +33,13 @@
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/api/health",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "health"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "health"
+              ]
             },
             "description": "Check if the API is running and healthy."
           },
@@ -76,8 +81,13 @@
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/api/agents",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "agents"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "agents"
+              ]
             },
             "description": "Retrieve a list of all AI agents with their session counts."
           },
@@ -123,8 +133,13 @@
             },
             "url": {
               "raw": "{{baseUrl}}/api/agents",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "agents"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "agents"
+              ]
             },
             "description": "Create a new AI agent with a name and system prompt."
           },
@@ -158,8 +173,14 @@
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/api/agents/{{agentId}}",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "agents", "{{agentId}}"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "agents",
+                "{{agentId}}"
+              ]
             },
             "description": "Retrieve a specific agent by its ID."
           },
@@ -199,10 +220,148 @@
             },
             "url": {
               "raw": "{{baseUrl}}/api/agents/{{agentId}}",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "agents", "{{agentId}}"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "agents",
+                "{{agentId}}"
+              ]
             },
             "description": "Update an existing agent's name and/or system prompt."
+          },
+          "response": []
+        },
+        {
+          "name": "Refine Prompt",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Refined prompt is returned', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('system_prompt');",
+                  "    pm.expect(jsonData.system_prompt).to.be.a('string');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"description\": \"A friendly math teacher who explains things simply.\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/agents/refine",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "agents",
+                "refine"
+              ]
+            },
+            "description": "Transform a simple description into a well-engineered system prompt using AI."
+          },
+          "response": []
+        },
+        {
+          "name": "List Agent Documents",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Documents list is returned', function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.be.an('array');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/agents/{{agentId}}/documents",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "agents",
+                "{{agentId}}",
+                "documents"
+              ]
+            },
+            "description": "Retrieve a list of all documents uploaded to a specific agent's knowledge base."
+          },
+          "response": []
+        },
+        {
+          "name": "Upload Document",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 201', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "description": "Select a PDF or TXT file to upload",
+                  "type": "file",
+                  "src": []
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/agents/{{agentId}}/documents",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "agents",
+                "{{agentId}}",
+                "documents"
+              ]
+            },
+            "description": "Upload a document to an agent's knowledge base for RAG context during chat."
           },
           "response": []
         },
@@ -226,8 +385,14 @@
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/api/agents/{{agentId}}",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "agents", "{{agentId}}"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "agents",
+                "{{agentId}}"
+              ]
             },
             "description": "Delete an agent and all its associated sessions and messages."
           },
@@ -269,8 +434,15 @@
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/api/agents/{{agentId}}/sessions",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "agents", "{{agentId}}", "sessions"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "agents",
+                "{{agentId}}",
+                "sessions"
+              ]
             },
             "description": "List all chat sessions for a specific agent."
           },
@@ -315,8 +487,15 @@
             },
             "url": {
               "raw": "{{baseUrl}}/api/agents/{{agentId}}/sessions",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "agents", "{{agentId}}", "sessions"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "agents",
+                "{{agentId}}",
+                "sessions"
+              ]
             },
             "description": "Create a new chat session for an agent. Title is optional."
           },
@@ -360,8 +539,15 @@
             },
             "url": {
               "raw": "{{baseUrl}}/api/agents/{{agentId}}/sessions",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "agents", "{{agentId}}", "sessions"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "agents",
+                "{{agentId}}",
+                "sessions"
+              ]
             },
             "description": "Create a new chat session without a title. The title will be auto-generated from the first message."
           },
@@ -394,8 +580,14 @@
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/api/sessions/{{sessionId}}",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "sessions", "{{sessionId}}"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "sessions",
+                "{{sessionId}}"
+              ]
             },
             "description": "Get session details including the last 50 messages and agent information."
           },
@@ -421,8 +613,14 @@
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/api/sessions/{{sessionId}}",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "sessions", "{{sessionId}}"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "sessions",
+                "{{sessionId}}"
+              ]
             },
             "description": "Delete a chat session and all its messages."
           },
@@ -460,8 +658,15 @@
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/api/sessions/{{sessionId}}/messages?limit=50",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "sessions", "{{sessionId}}", "messages"],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "sessions",
+                "{{sessionId}}",
+                "messages"
+              ],
               "query": [
                 {
                   "key": "limit",
@@ -515,8 +720,15 @@
             },
             "url": {
               "raw": "{{baseUrl}}/api/sessions/{{sessionId}}/messages",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "sessions", "{{sessionId}}", "messages"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "sessions",
+                "{{sessionId}}",
+                "messages"
+              ]
             },
             "description": "Send a text message and receive AI response via Server-Sent Events (SSE). Events: 'token' (streaming tokens), 'done' (final message with IDs), 'error' (error info)."
           },
@@ -574,8 +786,15 @@
             },
             "url": {
               "raw": "{{baseUrl}}/api/sessions/{{sessionId}}/voice",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "sessions", "{{sessionId}}", "voice"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "sessions",
+                "{{sessionId}}",
+                "voice"
+              ]
             },
             "description": "Send a voice message. The backend will: 1) Save the audio file, 2) Transcribe with Whisper (STT), 3) Get AI chat response, 4) Generate TTS audio, 5) Return both messages with audio URLs."
           },
@@ -607,8 +826,15 @@
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/api/audio/tts/example.mp3",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "audio", "tts", "example.mp3"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "audio",
+                "tts",
+                "example.mp3"
+              ]
             },
             "description": "Retrieve an audio file. Folders: 'uploads' (user voice messages), 'tts' (AI voice responses)."
           },
@@ -653,8 +879,13 @@
                 },
                 "url": {
                   "raw": "{{baseUrl}}/api/agents",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "agents"]
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "agents"
+                  ]
                 }
               },
               "response": []
@@ -690,8 +921,15 @@
                 },
                 "url": {
                   "raw": "{{baseUrl}}/api/agents/{{agentId}}/sessions",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "agents", "{{agentId}}", "sessions"]
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "agents",
+                    "{{agentId}}",
+                    "sessions"
+                  ]
                 }
               },
               "response": []
@@ -716,8 +954,15 @@
                 },
                 "url": {
                   "raw": "{{baseUrl}}/api/sessions/{{sessionId}}/messages",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "sessions", "{{sessionId}}", "messages"]
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "sessions",
+                    "{{sessionId}}",
+                    "messages"
+                  ]
                 }
               },
               "response": []
@@ -742,8 +987,15 @@
                 },
                 "url": {
                   "raw": "{{baseUrl}}/api/sessions/{{sessionId}}/messages",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "sessions", "{{sessionId}}", "messages"]
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "sessions",
+                    "{{sessionId}}",
+                    "messages"
+                  ]
                 }
               },
               "response": []
@@ -755,8 +1007,14 @@
                 "header": [],
                 "url": {
                   "raw": "{{baseUrl}}/api/sessions/{{sessionId}}",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "sessions", "{{sessionId}}"]
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "sessions",
+                    "{{sessionId}}"
+                  ]
                 }
               },
               "response": []
@@ -795,8 +1053,13 @@
                 },
                 "url": {
                   "raw": "{{baseUrl}}/api/agents",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "agents"]
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "agents"
+                  ]
                 }
               },
               "response": []
@@ -829,8 +1092,15 @@
                 },
                 "url": {
                   "raw": "{{baseUrl}}/api/agents/{{agentId}}/sessions",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "agents", "{{agentId}}", "sessions"]
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "agents",
+                    "{{agentId}}",
+                    "sessions"
+                  ]
                 }
               },
               "response": []
@@ -853,8 +1123,15 @@
                 },
                 "url": {
                   "raw": "{{baseUrl}}/api/sessions/{{sessionId}}/voice",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "sessions", "{{sessionId}}", "voice"]
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "sessions",
+                    "{{sessionId}}",
+                    "voice"
+                  ]
                 },
                 "description": "Upload an audio file to send a voice message. The response will include both the transcription and the TTS audio response."
               },
@@ -867,8 +1144,15 @@
                 "header": [],
                 "url": {
                   "raw": "{{baseUrl}}/api/sessions/{{sessionId}}/messages",
-                  "host": ["{{baseUrl}}"],
-                  "path": ["api", "sessions", "{{sessionId}}", "messages"]
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "sessions",
+                    "{{sessionId}}",
+                    "messages"
+                  ]
                 }
               },
               "response": []
