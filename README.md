@@ -15,20 +15,9 @@ A AI Agent Platform that enables users to create and manage AI agents with custo
 
 ## Demo
 
-Watch the platform in action:
-
-<div style="position: relative; padding-bottom: 56.25%; height: 0;">
-  <iframe 
-    src="https://www.loom.com/embed/0ecdec25eb0547f0a5b74f2ef001a631" 
-    frameborder="0" 
-    webkitallowfullscreen 
-    mozallowfullscreen 
-    allowfullscreen 
-    style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;">
-  </iframe>
-</div>
-
-**[Or view the full demo on Loom](https://www.loom.com/share/0ecdec25eb0547f0a5b74f2ef001a631)**
+## ## Watch the Platform in Action
+[![Watch the demo](https://cdn.loom.com/sessions/thumbnails/0ecdec25eb0547f0a5b74f2ef001a631-with-play.gif)](https://www.loom.com/share/0ecdec25eb0547f0a5b74f2ef001a631)
+[View the full demo on Loom →](https://www.loom.com/share/0ecdec25eb0547f0a5b74f2ef001a631)
 
 ## Tech Stack
 
