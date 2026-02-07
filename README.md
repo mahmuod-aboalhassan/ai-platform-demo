@@ -1,6 +1,6 @@
 # AI Agent Platform
 
-A  AI Agent Platform that enables users to create and manage AI agents with custom personalities, have text conversations with real-time streaming responses, and use voice communication.
+A AI Agent Platform that enables users to create and manage AI agents with custom personalities, have text conversations with real-time streaming responses, and use voice communication.
 
 ## Features
 
@@ -13,9 +13,27 @@ A  AI Agent Platform that enables users to create and manage AI agents with cust
 - **Message History**: Pagination support for long conversations
 - **Auto-generated Session Titles**: Based on the first message
 
+## Demo
+
+Watch the platform in action:
+
+<div style="position: relative; padding-bottom: 56.25%; height: 0;">
+  <iframe 
+    src="https://www.loom.com/embed/0ecdec25eb0547f0a5b74f2ef001a631" 
+    frameborder="0" 
+    webkitallowfullscreen 
+    mozallowfullscreen 
+    allowfullscreen 
+    style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;">
+  </iframe>
+</div>
+
+**[Or view the full demo on Loom](https://www.loom.com/share/0ecdec25eb0547f0a5b74f2ef001a631)**
+
 ## Tech Stack
 
 ### Backend
+
 - Python 3.10+
 - FastAPI (async)
 - SQLAlchemy (async ORM)
@@ -23,11 +41,13 @@ A  AI Agent Platform that enables users to create and manage AI agents with cust
 - OpenAI API (GPT-4o-mini, Whisper, TTS)
 
 ### Frontend
+
 - React 18+ with TypeScript
 - Tailwind CSS
 - React Context + useReducer
 
 ### DevOps
+
 - Docker & docker-compose
 
 ## Quick Start
@@ -41,27 +61,32 @@ A  AI Agent Platform that enables users to create and manage AI agents with cust
 ### Backend Setup
 
 1. Navigate to the backend directory:
+
    ```bash
    cd backend
    ```
 
 2. Create a virtual environment:
+
    ```bash
    python -m venv venv
    source venv/bin/activate  # On Windows: venv\Scripts\activate
    ```
 
 3. Install dependencies:
+
    ```bash
    pip install -r requirements.txt
    ```
 
 4. Create `.env` file from example:
+
    ```bash
    cp .env.example .env
    ```
 
 5. Add your OpenAI API key to `.env`:
+
    ```
    OPENAI_API_KEY=your-api-key-here
    ```
@@ -76,16 +101,19 @@ The API will be available at `http://localhost:8000`
 ### Frontend Setup
 
 1. Navigate to the frontend directory:
+
    ```bash
    cd frontend
    ```
 
 2. Install dependencies:
+
    ```bash
    npm install
    ```
 
 3. Create `.env` file:
+
    ```
    VITE_API_URL=http://localhost:8000/api
    ```
@@ -100,6 +128,7 @@ The frontend will be available at `http://localhost:5173`
 ### Docker Setup
 
 1. Create a `.env` file in the root directory:
+
    ```
    OPENAI_API_KEY=your-api-key-here
    ```
@@ -119,6 +148,7 @@ Once the backend is running, visit `http://localhost:8000/docs` for the interact
 ### API Endpoints
 
 #### Agents
+
 - `GET /api/agents` - List all agents
 - `POST /api/agents` - Create new agent
 - `POST /api/agents/refine` - Refine system prompt using AI
@@ -129,20 +159,24 @@ Once the backend is running, visit `http://localhost:8000/docs` for the interact
 - `POST /api/agents/{id}/documents` - Upload document
 
 #### Sessions
+
 - `GET /api/agents/{id}/sessions` - List sessions for agent
 - `POST /api/agents/{id}/sessions` - Create new session
 - `GET /api/sessions/{id}` - Get session with messages
 - `DELETE /api/sessions/{id}` - Delete session
 
 #### Messages
+
 - `GET /api/sessions/{id}/messages` - Get messages (paginated)
 - `POST /api/sessions/{id}/messages` - Send text message (SSE stream)
 
 #### Voice
+
 - `POST /api/sessions/{id}/voice` - Send voice message
 - `GET /api/audio/{folder}/{filename}` - Serve audio file
 
 #### Health
+
 - `GET /api/health` - Health check
 
 ## Project Structure
@@ -182,33 +216,39 @@ Once the backend is running, visit `http://localhost:8000/docs` for the interact
 ## Running Tests
 
 ### Backend Tests
+
 ```bash
 cd backend
 pytest
 ```
 
 To run with verbose output:
+
 ```bash
 pytest -v
 ```
 
 To run with coverage:
+
 ```bash
 pytest --cov=app
 ```
 
 ### Frontend Tests
+
 ```bash
 cd frontend
 npm test
 ```
 
 To run with UI:
+
 ```bash
 npm run test:ui
 ```
 
 To run with coverage:
+
 ```bash
 npm run test:coverage
 ```
@@ -256,6 +296,7 @@ The voice interaction follows this pipeline:
 ## Environment Variables
 
 ### Backend (.env)
+
 ```
 OPENAI_API_KEY=your-api-key-here
 DATABASE_URL=sqlite+aiosqlite:///./ai_agent.db
@@ -263,6 +304,7 @@ DEBUG=false
 ```
 
 ### Frontend (.env)
+
 ```
 VITE_API_URL=http://localhost:8000/api
 ```
